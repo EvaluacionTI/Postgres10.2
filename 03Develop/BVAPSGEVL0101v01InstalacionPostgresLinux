@@ -1,0 +1,148 @@
+# Oracle 10.0
+
+## 
+
+## Procedimiento
+
+### Version de ubuntu
+
+p028036@GoSwift:~$lsb_release -a
+
+### Actualizar componentes
+
+p028036@GoSwift:~$sudo apt-get update
+
+### Autoremover componentes
+
+p028036@GoSwift:~$sudo apt autoremove
+
+### Reiniciar el sistema linux
+
+p028036@GoSwift:~$reboot
+
+### Ingresar la clave de acceso
+
+Usuario : p028036
+Clave 	: BbvQ1908
+
+ 
+### Add PostgreSQL 11 APT repository
+		
+	debe importar la clave de firma del repositorio:
+
+p028036@OraclePostgres:~$wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+:::
+	ok
+:::
+
+### Importar clave
+Después de importar la clave GPG, agregue el contenido del repositorio a su sistema Ubuntu 18.04
+
+p028036@OraclePostgres:~$RELEASE=$(lsb_release -cs)
+p028036@OraclePostgres:~$echo "deb http://apt.postgresql.org/pub/repos/apt/ ${RELEASE}"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
+
+			 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+### Verify repository file contents
+p028036@OraclePostgres:~$vim /etc/apt/sources.list.d/pgdg.list
+
+	:::
+	deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
+	:::
+
+### Install PostgreSQL 11 on Ubuntu 18.04
+
+p028036@OraclePostgres:~$sudo apt update
+
+p028036@OraclePostgres:~$sudo apt -y install postgresql-11
+						 sudo apt -y install postgresql postgresql-contrib
+						 
+## Step 4: Allow  access to PostgreSQL from remote hosts
+
+p028036@OraclePostgres:~$sudo ss -tunelp | grep 5432
+
+## Revisando el estatus
+
+p028036@OraclePostgres:~$sudo systemctl status postgresql
+
+p028036@OraclePostgres:~$sudo service postgresql status
+
+	:::
+		● postgresql.service - PostgreSQL RDBMS
+		Loaded: loaded (/lib/systemd/system/postgresql.service; enabled; vendor pres
+		Active: active (exited) since Tue 2019-11-19 09:15:30 -05; 7h ago
+		Process: 933 ExecStart=/bin/true (code=exited, status=0/SUCCESS)
+		Main PID: 933 (code=exited, status=0/SUCCESS)
+		
+		nov 19 09:15:30 OPME systemd[1]: Starting PostgreSQL RDBMS...
+		nov 19 09:15:30 OPME systemd[1]: Started PostgreSQL RDBMS.
+	:::
+	
+## El servidor PostgreSQL se iniciará después del reinicio. 
+	Para manipular este comportamiento predeterminado, puede deshabilitar o habilitar 
+	el inicio de PostreSQL después de reiniciar
+
+p028036@OraclePostgres:~$sudo systemctl disable postgresql
+
+p028036@OraclePostgres:~$sudo systemctl stop postgresql
+
+## Habilitar y reboot
+
+p028036@OraclePostgres:~$sudo systemctl enable postgresql
+
+p028036@OraclePostgres:~$sudo systemctl restart postgresql
+
+
+## Verificar la version disponible
+
+p028036@OPME:~$sudo apt show postgresql
+
+:::
+		Package: postgresql
+		Version: 10+190ubuntu0.1
+		Priority: optional
+		Section: database
+		Source: postgresql-common (190ubuntu0.1)
+		Origin: Ubuntu
+		Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+		Original-Maintainer: Debian PostgreSQL Maintainers <pkg-postgresql-public@lists.alioth.debian.org>
+		Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+		Installed-Size: 63,5 kB
+		Depends: postgresql-10
+		Suggests: postgresql-doc
+		Task: postgresql-server
+		Supported: 5y
+		Download-Size: 5.884 B
+		APT-Manual-Installed: yes
+		APT-Sources: http://pe.archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages
+		Description: Base de datos SQL objeto-relacional (versión con soporte)
+		 This metapackage always depends on the currently supported PostgreSQL
+		 database server version.
+		 .
+		 PostgreSQL es un completo sistema de gestión de bases de datos objeto-
+		 relacionales. Admite gran parte del estándar SQL y, en algunos aspectos,
+		 está diseñado para que sea extensible por los usuarios. Algunas de estas
+		 características son: transacciones ACID, claves ajenas, vistas,
+		 secuencias, subpeticiones, lanzadores, tipos y funciones definidos por el
+		 usuario, uniones externas y control de concurrencia multiversión. También
+		 están disponibles interfaces gráficas de usuario y pasarelas para varios
+		 lenguajes de programación.
+
+		N: Hay 1 registro adicional. Utilice la opción «-a» para verlo.
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
