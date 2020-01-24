@@ -1,0 +1,213 @@
+# Uusuaro postgres
+
+##1. Objevito
+
+	Usuario postgres por defecto
+	
+
+##2. Procedimiento
+
+### Concepto
+
+	PostgreSQL crea un usuario especial postgres que tiene todos los derechos. Para usar realmente PostgreSQL, primero debe iniciar sesión en esa cuenta
+
+
+##3. Conexion a superusuario postgres
+p028036@OPME:~$ sudo su postgres
+[sudo] contraseña para p028036: 
+
+	:::
+		postgres@OPME:/home/p028036$ 
+	:::
+
+##4. Conexión con otro usuario a postgres
+
+postgres@OPME:/home/p028036$ psql -h 127.0.0.1 -p5432 -U P028036 postgres
+
+	Password for user p028036: Bbv@1908
+
+	:::
+		psql: FATAL:  password authentication failed for user "P028036"
+		FATAL:  password authentication failed for user "P028036"
+		postgres@OPME:/home/p028036$
+	:::
+
+##5. Ingrese como modo root para corregir este valor a efectuar (sudo su root) / key = Bbv@1908 
+	Para corregir este inconveniente vayamos y abrimos el archivo pg_hba.conf
+	que se encuentra en /etc/postgresql/10/main/pg_hba.conf
+
+root@OPME:/etc/postgresql/10/main# ls -l
+
+	:::
+		total 52
+		drwxr-xr-x 2 postgres postgres  4096 nov 14 17:14 conf.d
+		-rw-r--r-- 1 postgres postgres   315 nov 14 17:14 environment
+		-rw-r--r-- 1 postgres postgres   143 nov 14 17:14 pg_ctl.conf
+		-rw-r----- 1 postgres postgres  4686 nov 14 17:14 pg_hba.conf
+		-rw-r----- 1 postgres postgres  1636 nov 14 17:14 pg_ident.conf
+		-rw-r--r-- 1 postgres postgres 23055 nov 14 17:14 postgresql.conf
+		-rw-r--r-- 1 postgres postgres   317 nov 14 17:14 start.conf
+	:::
+	
+##6. Editando el archivo pg_hba.conf. Lo único es reemplazar el método peer por md5 en
+	"local is for Unix domain socket connection only".
+	Para que haga efecto el cambio necesitamos reiniciar el servicio de postgres, sino te va a seguir saliendo en mismo mensaje de error.
+
+	:::
+		# Database administrative login by Unix domain socket
+		local   all             postgres                                peer
+		
+		# TYPE  DATABASE        USER            ADDRESS                 METHOD
+		
+		# "local" is for Unix domain socket connections only
+		local   all             all                                     md5
+		# IPv4 local connections:
+		host    all             all             127.0.0.1/32            md5
+		# IPv6 local connections:
+		host    all             all             ::1/128                 md5
+		# Allow replication connections from localhost, by a user with the
+		# replication privilege.
+
+	:::
+
+
+root@OPME:/etc/postgresql/10/main# vim pg_hba.conf
+	
+	
+	:::
+	psql (10.10 (Ubuntu 10.10-0ubuntu0.18.04.1))
+	SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off)
+	Type "help" for help.
+	
+	postgres=#
+	:::
+
+##8. Conexion a Postegres bajo psql <base datos> <usuario>
+postgres@OPME:/home/p028036$ psql -U p028036 -h localhost bbvadesarrollo
+
+
+
+										List of roles
+		Role name |                         Attributes                         | Member of 
+		-----------+------------------------------------------------------------+-----------
+		p028036   |                                                            | {}
+		postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+		
+	:::
+
+
+##4. Asignando un rol superusuario
+
+postgres=# ALTER USER P028036 WITH SUPERUSER CREATEDB CREATEROLE LOGIN REPLICATION;
+	:::
+		ALTER ROLE
+	:::
+
+postgres=#\du
+
+	:::
+										List of roles
+		Role name |                         Attributes                         | Member of 
+		-----------+------------------------------------------------------------+-----------
+		p028036   | Superuser, Create role, Create DB, Replication             | {}
+		postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+		
+	:::
+
+##5. Eliminando el usuario
+
+postgres=#DROP USER p028036;
+
+	:::
+		ALTER ROLE
+	:::
+
+
+##6. En una conexión en red puede visualizar el siguiente mensaje : 
+	a) Estoy efectuando una conexión de mi pc local con Java hacia una máquina virtual que
+		tiene instalado base de datos Postgres.
+	b) Se presentó lo siguiente:
+	
+	b.1.- "Connection to 192.168.56.101:5432 refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections."
+	
+	Solution : 
+		En el archivo de linux /etc/postgresql/10/main/postgresql.conf
+		Editarlo con vim u otro editor
+		
+		Situación actual
+		:::
+			#------------------------------------------------------------------------------
+			# CONNECTIONS AND AUTHENTICATION
+			#------------------------------------------------------------------------------
+			
+			# - Connection Settings -
+			
+			#listen_addresses = 'localhost'         # what IP address(es) to listen on;
+													# comma-separated list of addresses;
+													# defaults to 'localhost'; use '*' for all
+													# (change requires restart)
+			port = 5432                             # (change requires restart)
+			max_connections = 100                   # (change requires restart)
+		:::
+		
+		Cambiar el item listen_addresses = *
+		:::
+			#------------------------------------------------------------------------------
+			# CONNECTIONS AND AUTHENTICATION
+			#------------------------------------------------------------------------------
+			
+			# - Connection Settings -
+			
+			#listen_addresses = 'localhost'         # what IP address(es) to listen on;
+													# comma-separated list of addresses;
+													# defaults to 'localhost'; use '*' for all
+													# (change requires restart)
+			listen_addresses = '*'
+			port = 5432                             # (change requires restart)
+			max_connections = 100                   # (change requires restart)
+		:::
+	
+	
+	
+	b.2.- FATAL: no pg_hba.conf entry for host "192.168.56.1", user "p028036", database "AEMSADesarrollo", SSL off
+
+	Solution : 
+		En el archivo de linux /etc/postgresql/10/main/pg_hba.conf
+		Editarlo con vim u otro editor
+		
+		Situación actual
+		:::
+			# If you change this first entry you will need to make sure that the
+			# database superuser can access the database using some other method.
+			# Noninteractive access to all databases is required during automatic
+			# maintenance (custom daily cronjobs, replication, and similar tasks).
+			#
+			# Database administrative login by Unix domain socket
+			local   all             postgres                                peer
+			
+			# TYPE  DATABASE        USER            ADDRESS                 METHOD
+			
+			# "local" is for Unix domain socket connections only
+			local   all             all                                     md5
+			# IPv4 local connections:
+			host    all             all             127.0.0.1/32            md5
+			# IPv6 local connections:
+			host    all             all             ::1/128                 md5
+			# Allow replication connections from localhost, by a user with the
+			# replication privilege.
+			local   replication     all                                     peer
+			host    replication     all             127.0.0.1/32            md5
+			host    replication     all             ::1/128                 md5
+		:::
+		
+		Cambiar el item # IPv4 local connections:
+			host    all             all             127.0.0.1/32            md5
+			host    all             all             196.168.56.1/105        md5
+			
+		:::
+			# IPv4 local connections:
+			host    all             all             127.0.0.1/32            md5
+			host    all             all             192.168.56.101          md5
+		:::	
+	
+	
