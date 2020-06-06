@@ -1,0 +1,111 @@
+# Oracle 10.0
+
+## 
+
+## Procedimiento
+
+### Version de ubuntu
+
+p028036@GoSwift:~$lsb_release -a
+
+### Actualizar componentes
+
+p028036@GoSwift:~$sudo apt-get update
+
+### Autoremover componentes
+
+p028036@GoSwift:~$sudo apt autoremove
+
+### Reiniciar el sistema linux
+
+p028036@GoSwift:~$reboot
+
+### Ingresar la clave de acceso
+
+Usuario : p028036
+Clave 	: Bbv@1908
+
+ 
+### Para desinstalar PostgreSQL en Linux Mint o en Ubuntu, ejecuta los siguientes comandos
+
+Con el comando obtienes una lista de todos los paquetes PostgreSQL instalados en tu servidor, con esto procedemos a des instalarlos con el siguiente comando, en mi caso quedo así.
+
+	p028036@OraclePostgres:~$dpkg -l | grep postres
+	:::
+		ii  postgresql-client-10                       10.10-0ubuntu0.18.04.1                          amd64        front-end programs for PostgreSQL 10
+		ii  postgresql-client-common                   190ubuntu0.1                                    all          manager for multiple PostgreSQL client versions
+		ii  postgresql-common                          190ubuntu0.1                                    all          PostgreSQL database-cluster manager
+	
+	:::
+
+### Aplicar el comando para eliminar un paquete
+
+	p028036@OPME:~$ sudo apt-get --purge remove postgresql-10
+	:::
+		
+		Leyendo lista de paquetes... Hecho
+		Creando árbol de dependencias       
+		Leyendo la información de estado... Hecho
+		El paquete «postgresql-10» no está instalado, no se eliminará
+		0 actualizados, 0 nuevos se instalarán, 0 para eliminar y 0 no actualizados.
+		
+	:::
+	
+### Otro paquete cliente
+
+p028036@OPME:~$ sudo apt-get --purge remove postgresql-client-10
+
+	:::
+		Leyendo lista de paquetes... Hecho
+		Creando árbol de dependencias       
+		Leyendo la información de estado... Hecho
+		El paquete indicado a continuación se instaló de forma automática y ya no es necesario.
+		libpq5
+		Utilice «sudo apt autoremove» para eliminarlo.
+		Los siguientes paquetes se ELIMINARÁN:
+		postgresql-client-10*
+		0 actualizados, 0 nuevos se instalarán, 1 para eliminar y 0 no actualizados.
+		Se liberarán 3.203 kB después de esta operación.
+		¿Desea continuar? [S/n]
+		
+		(Leyendo la base de datos ... 168579 ficheros o directorios instalados actualmente.)
+		Desinstalando postgresql-client-10 (10.10-0ubuntu0.18.04.1) ...
+		Procesando disparadores para postgresql-common (190ubuntu0.1) ...
+		Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+		en_us
+		Removing obsolete dictionary files:
+
+	:::
+
+### Eliminando los paquete comunes
+
+p028036@OPME:~$ sudo apt-get --purge remove postgresql-client-common
+	:::
+		Leyendo lista de paquetes... Hecho
+		Creando árbol de dependencias       
+		Leyendo la información de estado... Hecho
+		El paquete indicado a continuación se instaló de forma automática y ya no es necesario.
+		libpq5
+		Utilice «sudo apt autoremove» para eliminarlo.
+		Los siguientes paquetes se ELIMINARÁN:
+		postgresql-client-common* postgresql-common*
+		0 actualizados, 0 nuevos se instalarán, 2 para eliminar y 0 no actualizados.
+		Se liberarán 815 kB después de esta operación.
+		¿Desea continuar? [S/n]
+		(Leyendo la base de datos ... 168360 ficheros o directorios instalados actualmente.)
+		Desinstalando postgresql-common (190ubuntu0.1) ...
+		Eliminando `desviación de /usr/bin/pg_config a /usr/bin/pg_config.libpq-dev por postgresql-common'
+		Desinstalando postgresql-client-common (190ubuntu0.1) ...
+		Procesando disparadores para man-db (2.8.3-2ubuntu0.1) ...
+		(Leyendo la base de datos ... 168229 ficheros o directorios instalados actualmente.)
+		Purgando ficheros de configuración de postgresql-client-common (190ubuntu0.1) ...
+		dpkg: atención: al desinstalar postgresql-client-common, el directorio «/etc/postgresql-common» no está vacío, por lo que no se borra
+		Purgando ficheros de configuración de postgresql-common (190ubuntu0.1) ...
+		dpkg: atención: al desinstalar postgresql-common, el directorio «/var/lib/postgresql» no está vacío, por lo que no se borra
+		Procesando disparadores para systemd (237-3ubuntu10.31) ...
+		Procesando disparadores para ureadahead (0.100.0-21) ...
+
+	:::
+
+
+
